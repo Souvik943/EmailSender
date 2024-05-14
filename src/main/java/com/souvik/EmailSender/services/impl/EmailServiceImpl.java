@@ -34,7 +34,13 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendEmailToMultiple(String[] sendTo, String subject, String message) {
-
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(sendTo);
+        simpleMailMessage.setText(message);
+        simpleMailMessage.setSubject(subject);
+        simpleMailMessage.setFrom("souvikkarmakarwork@gmail.com");
+        javaMailSender.send(simpleMailMessage);
+        logger.info(CommonUtils.EMAIL_IS_SENT);
     }
 
     @Override
