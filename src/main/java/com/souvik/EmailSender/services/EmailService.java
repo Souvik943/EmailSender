@@ -10,7 +10,7 @@ public interface EmailService {
 
     void sendEmailwithHTML(String sendTo, String subject, String htmlContent);
 
-    void sendEmailWithFile(String sendTo, String subject, File file);
+    void sendEmailWithFile(String sendTo, String subject, String message, File file);
 
 
 }
