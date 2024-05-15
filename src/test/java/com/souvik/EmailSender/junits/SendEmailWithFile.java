@@ -20,7 +20,6 @@ public class SendEmailWithFile {
     @Test
     void emailSendTestWithFile(){
         logger.info(CommonUtils.EMAIL_IS_SENDING);
-//        emailService.sendEmailWithFile("souvikkarmakar2k19@gmail.com","Email with a File","Sending this email with an attachment",new File("Downloads/Souvik_Resume"));
         emailService.sendEmailWithFile("souvikkarmakar2k19@gmail.com","Email with a File","Sending this email with an attachment",new File("C:\\Users\\souvi\\Souvik\\Projects\\Email-Sender\\src\\main\\resources\\static\\Souvik_Resume.pdf"));
     }
 }
