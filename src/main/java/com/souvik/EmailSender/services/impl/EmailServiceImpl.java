@@ -13,6 +13,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 @Service
@@ -85,6 +89,32 @@ public class EmailServiceImpl implements EmailService {
         }
         catch (MessagingException m) {
             throw new RuntimeException(m);
+        }
+    }
+
+    @Override
+    public void sendEmailWithFile(String sendTo, String subject, String message, InputStream inputStream) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
+            mimeMessageHelper.setTo(sendTo);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setFrom(CommonUtils.SEND_FROM);
+            mimeMessageHelper.setText(message);
+
+            File file = new File("C:\\Users\\souvi\\Souvik\\Projects\\Email-Sender\\src\\main\\resources\\static\\Souvik_Resume.pdf");
+            Files.copy(inputStream,file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            FileSystemResource fileSystemResource = new FileSystemResource(file);
+            mimeMessageHelper.addAttachment(fileSystemResource.getFilename(),file);
+
+            javaMailSender.send(mimeMessage);
+            logger.info(CommonUtils.EMAIL_IS_SENT);
+        }
+        catch (MessagingException m) {
+            throw new RuntimeException(m);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

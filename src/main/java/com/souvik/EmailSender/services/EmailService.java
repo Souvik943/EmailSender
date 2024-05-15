@@ -1,6 +1,7 @@
 package com.souvik.EmailSender.services;
 
 import java.io.File;
+import java.io.InputStream;
 
 public interface EmailService {
 
@@ -11,6 +12,8 @@ public interface EmailService {
     void sendEmailwithHTML(String sendTo, String subject, String htmlContent);
 
     void sendEmailWithFile(String sendTo, String subject, String message, File file);
+
+    void sendEmailWithFile(String sendTo, String subject, String message, InputStream inputStream);
 
 
 }
