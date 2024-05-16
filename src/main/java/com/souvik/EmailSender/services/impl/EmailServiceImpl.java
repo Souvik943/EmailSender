@@ -1,12 +1,15 @@
 package com.souvik.EmailSender.services.impl;
 
 import com.souvik.EmailSender.common.CommonUtils;
+import com.souvik.EmailSender.common.CustomResponse;
 import com.souvik.EmailSender.services.EmailService;
+import com.souvik.EmailSender.validations.Validations;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -29,6 +32,8 @@ public class EmailServiceImpl implements EmailService {
     public EmailServiceImpl(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
+
+    Validations validations = new Validations();
 
     @Override
     public void sendEmailToSingle(String sendTo, String subject, String message) {
@@ -62,8 +67,15 @@ public class EmailServiceImpl implements EmailService {
             mimeMessageHelper.setText(htmlContent,true);
             mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setFrom(CommonUtils.SEND_FROM);
-            javaMailSender.send(mimeMessage);
-            logger.info(CommonUtils.EMAIL_IS_SENT);
+
+            if(validations.isSendToValid(sendTo)) {
+                logger.info(CommonUtils.EMAIL_IS_SENDING);
+                javaMailSender.send(mimeMessage);
+                logger.info(CommonUtils.EMAIL_IS_SENT);
+            }
+            else {
+                logger.info(CommonUtils.ERROR);
+            }
         }
         catch (MessagingException m) {
             throw new RuntimeException(m);
@@ -108,13 +120,17 @@ public class EmailServiceImpl implements EmailService {
             FileSystemResource fileSystemResource = new FileSystemResource(file);
             mimeMessageHelper.addAttachment(fileSystemResource.getFilename(),file);
 
-            javaMailSender.send(mimeMessage);
-            logger.info(CommonUtils.EMAIL_IS_SENT);
+            if(validations.isSendToValid(sendTo)) {
+                logger.info(CommonUtils.EMAIL_IS_SENDING);
+                javaMailSender.send(mimeMessage);
+                logger.info(CommonUtils.EMAIL_IS_SENT);
+            }
+            else {
+                logger.info(CommonUtils.ERROR);
+            }
         }
-        catch (MessagingException m) {
+        catch (MessagingException | IOException m) {
             throw new RuntimeException(m);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
